@@ -55,28 +55,67 @@ fun SettingsView (preferencesViewModel: PreferencesViewModel) {
     var edad by rememberSaveable {
         mutableStateOf("")
     }
+    var altura by rememberSaveable {
+        mutableStateOf("")
+    }
+    var peso by rememberSaveable {
+        mutableStateOf("")
+    }
+    var pasatiempo by rememberSaveable {
+        mutableStateOf("")
+    }
     var corrutineScope = rememberCoroutineScope()
     var savedAge = preferencesViewModel.age.collectAsState(initial = 0)
-    var saveName = preferencesViewModel.name.collectAsState(initial = "???")
+    var savedName = preferencesViewModel.name.collectAsState(initial = "???")
+    var savedHeight = preferencesViewModel.height.collectAsState(initial = 0)
+    var savedWeight = preferencesViewModel.weight.collectAsState(initial = 0)
+    var savedHobby = preferencesViewModel.hobby.collectAsState(initial = "???")
 
     Column(Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        TextField(value = nombre, onValueChange = {
-            nombre = it
-        })
-        TextField(value = edad, onValueChange = {
-            edad = it
-        })
+        if (savedName.value == "???") {TextField(value = nombre, onValueChange = {
+            nombre = it })
+        }
+
+        if (savedAge.value == 0) {TextField(value = edad, onValueChange = {
+            edad = it })
+        }
+
+        if (savedHeight.value == 0) {TextField(value = altura, onValueChange = {
+            altura = it })
+        }
+
+        if (savedWeight.value == 0) {TextField(value = peso, onValueChange = {
+            peso = it })
+        }
+
+        if (savedHobby.value == "???") {TextField(value = pasatiempo, onValueChange = {
+            pasatiempo = it })
+        }
+
         Button(onClick = {
             corrutineScope.launch {
                 if(edad.toIntOrNull() != null){
-                    preferencesViewModel.setNameAndAge(nombre,edad.toInt())
+                    preferencesViewModel.setNameAndAge(
+                        nombre,
+                        edad.toInt(),
+                        altura.toInt(),
+                        peso.toInt(),
+                        pasatiempo)
+                    // Ocultar los campos de texto después de guardar los datos
+                    nombre = ""
+                    edad = ""
+                    altura = ""
+                    peso = ""
+                    pasatiempo = ""
                 }
             }
         }){
             Text(text = "Guardar datos")
         }
-        Text(text = "Tu nombre es ${saveName.value} y tienes ${savedAge.value} años")
+        Text(text = "Tu nombre es ${savedName.value}, tienes ${savedAge.value} años, " +
+                "tu altura es ${savedHeight.value} cm, tu peso es ${savedWeight.value} kg" +
+                " y tu pasatiempo es ${savedHobby.value}")
     }
 }
 
